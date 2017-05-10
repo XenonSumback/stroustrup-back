@@ -1,13 +1,14 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import viewsets, response
+from rest_framework.response import Response
+
 from serializers import UserSerializer
-from django.views.generic.edit import FormView
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,23 +18,23 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
+@csrf_exempt
+def userAuth(request):
+    username = request.POST.get('username', None)
+    password = request.POST.get('password', None)
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return HttpResponse("{'redirect':'http://google.ru'}")
+            # Redirect to a success page.
+        else:
+            return HttpResponse("errors disabled account")
+    # Return a 'disabled account' error message
+    else:
+        return HttpResponse("errors invalid data")
 
-class RegisterFormView(FormView):
-    form_class = UserCreationForm
-    success_url = "/login/"
-    template_name = "register.html"
-
-    def form_valid(self, form):
-        form.save()
-        return super(RegisterFormView, self).form_valid(form)
+# Return an 'invalid login' error message.
 
 
-class LoginFormView(FormView):
-    form_class = AuthenticationForm
-    template_name = "login.html"
-    success_url = "/"
 
-    def form_valid(self, form):
-        self.user = form.get_user()
-        login(self.request, self.user)
-        return super(LoginFormView, self).form_valid(form)
