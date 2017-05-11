@@ -5,7 +5,10 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets, response
+from rest_framework import viewsets
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from serializers import UserSerializer
@@ -18,6 +21,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
+
 @csrf_exempt
 def userAuth(request):
     username = request.POST.get('username', None)
@@ -26,15 +30,39 @@ def userAuth(request):
     if user is not None:
         if user.is_active:
             login(request, user)
-            return HttpResponse("{'redirect':'http://google.ru'}")
+            content = {
+                'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+                'auth': unicode(request.auth),  # None
+            }
+            return Response(content)
             # Redirect to a success page.
         else:
-            return HttpResponse("errors disabled account")
+            content = {
+                'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+                'auth': unicode(request.auth),  # None
+            }
+            return Response(content)
     # Return a 'disabled account' error message
     else:
-        return HttpResponse("errors invalid data")
+        content = {
+            'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+            'auth': unicode(request.auth),  # None
+        }
+        return Response(content)
 
 # Return an 'invalid login' error message.
 
+
+@api_view(['POST'])
+# @authentication_classes((SessionAuthentication, BasicAuthentication))
+# @permission_classes((IsAuthenticated,))
+@authentication_classes([])
+@permission_classes([])
+def example_view(request, format=None):
+    content = {
+        'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+        'auth': unicode(request.auth),  # None
+    }
+    return Response(content)
 
 
