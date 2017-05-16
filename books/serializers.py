@@ -3,6 +3,8 @@ from rest_framework import serializers
 
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
+    likes = serializers.IntegerField(source='likes.count', read_only=True)
+
     class Meta:
         model = Books
         fields = ('id', 'name_book', 'authors', 'tags', 'description', 'ISBN', 'publishing_house',

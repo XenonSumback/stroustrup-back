@@ -1,5 +1,6 @@
 # Create your views here.
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -9,45 +10,45 @@ from rest_framework import viewsets
 from serializers import BookSerializer, AuthorSerializer, TagsSerializer, CommentSerializer
 
 
-class BookList(viewsets.ViewSet):
+class BookList(viewsets.ModelViewSet):
     """
     API endpoint that allows books to be viewed or edited.
     """
     queryset = Books.objects.all()
     serializer_class = BookSerializer
 
-    def list(self, request):
-        queryset = Books.objects.all()
-        serializer = BookSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
-
-    def create(self, request, format=None):
-        serializer = BookSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def retrieve(self, request, pk=None):
-        queryset = Books.objects.all()
-        book = get_object_or_404(queryset, pk=pk)
-        serializer = BookSerializer(book, context={'request': request})
-        return Response(serializer.data)
-
-    def update(self, request, pk = None):
-        queryset = Books.objects.all()
-        book = get_object_or_404(queryset, pk=pk)
-        serializer = BookSerializer(book, data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, pk=None):
-        queryset = Books.objects.all()
-        book = get_object_or_404(queryset, pk=pk)
-        book.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # def list(self, request):
+    #     queryset = Books.objects.all()
+    #     serializer = BookSerializer(queryset, many=True, context={'request': request})
+    #     return Response(serializer.data)
+    #
+    # def create(self, request, format=None):
+    #     serializer = BookSerializer(data=request.data, context={'request': request})
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # def retrieve(self, request, pk=None):
+    #     queryset = Books.objects.all()
+    #     book = get_object_or_404(queryset, pk=pk)
+    #     serializer = BookSerializer(book, context={'request': request})
+    #     return Response(serializer.data)
+    #
+    # def update(self, request, pk = None):
+    #     queryset = Books.objects.all()
+    #     book = get_object_or_404(queryset, pk=pk)
+    #     serializer = BookSerializer(book, data=request.data, context={'request': request})
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #
+    # def destroy(self, request, pk=None):
+    #     queryset = Books.objects.all()
+    #     book = get_object_or_404(queryset, pk=pk)
+    #     book.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -105,12 +106,18 @@ class CommentViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# class LikesViewSet(viewsets.ViewSet):
-#     queryset = Likes.objects.all()
-#     serializer_class = LikesSerializer
-#
-#     def list(self, request, book_id):
-#         queryset = Likes.objects.all()
-#         likes = queryset.filter(id_book=book_id)
-#         serializer = LikesSerializer(likes, many=True, context={'request': request})
-#         return Response(serializer.data)
+@api_view()
+def like(request, book_id, pk=None):
+    queryset = Books.objects.all()
+    likes = queryset.filter(id_book=book_id)
+    like = get_object_or_404(likes, pk=pk)
+    if like is None:
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    else:
+        like.delete()
+    return Response()
+
+
+

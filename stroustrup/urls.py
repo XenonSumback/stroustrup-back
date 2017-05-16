@@ -26,6 +26,7 @@ router.register(r'authors', AuthorViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'books/(?P<book_id>\d+)/comments', CommentViewSet)
+router.register(r'books/(?P<book_id>\d+)/like/(?P<pk>\d+)', like, base_name='likes')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
