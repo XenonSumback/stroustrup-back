@@ -29,14 +29,10 @@ class Books(models.Model):
     publishing_house = models.CharField(max_length=20, blank="true")
     year = models.IntegerField(blank="true")
     quantity = models.IntegerField(blank="true")
+    likes = models.ManyToManyField(User)
 
     def __str__(self):
         return self.name_book
-
-
-class Likes(models.Model):
-    users = models.ManyToManyField(User)
-    books = models.ManyToManyField(Books)
 
 
 class Comments(models.Model):

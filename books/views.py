@@ -103,3 +103,14 @@ class CommentViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# class LikesViewSet(viewsets.ViewSet):
+#     queryset = Likes.objects.all()
+#     serializer_class = LikesSerializer
+#
+#     def list(self, request, book_id):
+#         queryset = Likes.objects.all()
+#         likes = queryset.filter(id_book=book_id)
+#         serializer = LikesSerializer(likes, many=True, context={'request': request})
+#         return Response(serializer.data)
