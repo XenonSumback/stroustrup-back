@@ -21,10 +21,11 @@ from users.views import (UserViewSet)
 
 
 router = routers.DefaultRouter()
-router.register(r'books', BookViewSet)
+router.register(r'books', BookList, base_name='books'),
 router.register(r'authors', AuthorViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'users', UserViewSet)
+router.register(r'books/(?P<book_id>\d+)/comments', CommentViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

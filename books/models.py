@@ -1,6 +1,7 @@
 # from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -31,6 +32,23 @@ class Books(models.Model):
 
     def __str__(self):
         return self.name_book
+
+
+class Likes(models.Model):
+    users = models.ManyToManyField(User)
+    books = models.ManyToManyField(Books)
+
+
+class Comments(models.Model):
+    id_book = models.ForeignKey(Books)
+    id_user = models.ForeignKey(User)
+    date = models.DateField()
+    comment = models.TextField()
+
+    def __str__(self):
+        return self.id_book
+
+
 
 
 
