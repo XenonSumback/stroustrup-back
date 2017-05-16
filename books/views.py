@@ -78,16 +78,17 @@ class CommentViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, pk=None):
-        queryset = self.queryset
-        comment = get_object_or_404(queryset, pk=pk)
+    def retrieve(self, request, book_id, pk=None):
+        queryset = Comments.objects.all()
+        comments = queryset.filter(id_book=book_id)
+        comment = get_object_or_404(comments, pk=pk)
         serializer = CommentSerializer(comment, context={'request': request})
         return Response(serializer.data)
 
-    def update(self, request, pk=None):
-        queryset = self.queryset
+    def update(self, request, book_id, pk=None):
+        queryset = Comments.objects.all()
         comment = get_object_or_404(queryset, pk=pk)
-        if comment.id_user != request.id_user:
+        if comment.id_user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = CommentSerializer(comment, data=request.data, context={'request': request})
         if serializer.is_valid():
@@ -95,10 +96,10 @@ class CommentViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk=None):
-        queryset = self.queryset
+    def destroy(self, request, book_id, pk=None):
+        queryset = Comments.objects.all()
         comment = get_object_or_404(queryset, pk=pk)
-        if comment.id_user != request.id_user:
+        if comment.id_user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
