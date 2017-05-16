@@ -1,4 +1,4 @@
-from models import Books, Authors, Tags, Comments
+from models import Books, Authors, Tags, Comments, Likes
 from rest_framework import serializers
 
 
@@ -24,3 +24,9 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Comments
         fields = ('id', 'id_user', 'id_book', 'date', 'comment')
+
+
+class LikesSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Likes
+        fields = ('id', 'id_user', 'id_book')
