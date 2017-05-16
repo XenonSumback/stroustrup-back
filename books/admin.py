@@ -5,3 +5,4 @@ from books.models import *
 admin.site.register(Books)
 admin.site.register(Tags)
 admin.site.register(Comments)
+admin.site.register(Authors)
