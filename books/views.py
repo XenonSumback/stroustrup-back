@@ -107,16 +107,12 @@ class CommentViewSet(viewsets.ViewSet):
 
 
 @api_view()
-def like(request, book_id, pk=None):
-    queryset = Books.objects.all()
-    likes = queryset.filter(id_book=book_id)
-    like = get_object_or_404(likes, pk=pk)
-    if like is None:
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+def likes_handler(request, book_id):
+    book = Books.objects.get(id=book_id)
+    if book.likes.filter(pk=request.user.pk).exists():
+        book.likes.remove(request.user)
     else:
-        like.delete()
+        book.likes.add(request.user)
     return Response()
 
 

@@ -26,11 +26,11 @@ router.register(r'authors', AuthorViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'books/(?P<book_id>\d+)/comments', CommentViewSet)
-router.register(r'books/(?P<book_id>\d+)/like/(?P<pk>\d+)', like, base_name='likes')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),
+    url(r'books/(?P<book_id>\d+)/like', likes_handler),
     url(r'^', include('users.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
