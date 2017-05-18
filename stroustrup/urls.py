@@ -16,12 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from rest_framework import routers
-from books.views import *
+from books.views import BookViewSet, AuthorViewSet, TagViewSet, CommentViewSet, likes_handler
 from users.views import (UserViewSet)
 
 
 router = routers.DefaultRouter()
-router.register(r'books', BookList, base_name='books'),
+router.register(r'books', BookViewSet)
 router.register(r'authors', AuthorViewSet)
 router.register(r'tags', TagViewSet)
 router.register(r'users', UserViewSet)

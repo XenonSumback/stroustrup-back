@@ -1,14 +1,9 @@
-from django.http.response import HttpResponse
-from django.shortcuts import render
-
 # Create your views here.
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from serializers import UserSerializer
@@ -26,29 +21,18 @@ class UserViewSet(viewsets.ModelViewSet):
 def userAuth(request):
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
+    content = {
+        'user': unicode(request.user),  # `django.contrib.auth.User` instance.
+        'auth': unicode(request.auth),  # None
+    }
     user = authenticate(username=username, password=password)
     if user is not None:
         if user.is_active:
             login(request, user)
-            content = {
-                'user': unicode(request.user),  # `django.contrib.auth.User` instance.
-                'auth': unicode(request.auth),  # None
-            }
             return Response(content)
-            # Redirect to a success page.
-        else:
-            content = {
-                'user': unicode(request.user),  # `django.contrib.auth.User` instance.
-                'auth': unicode(request.auth),  # None
-            }
-            return Response(content)
+            # Redirect to a success page.)
     # Return a 'disabled account' error message
-    else:
-        content = {
-            'user': unicode(request.user),  # `django.contrib.auth.User` instance.
-            'auth': unicode(request.auth),  # None
-        }
-        return Response(content)
+    return Response(content)
 
 # Return an 'invalid login' error message.
 
@@ -58,11 +42,9 @@ def userAuth(request):
 # @permission_classes((IsAuthenticated,))
 @authentication_classes([])
 @permission_classes([])
-def example_view(request, format=None):
+def example_view(request):
     content = {
         'user': unicode(request.user),  # `django.contrib.auth.User` instance.
         'auth': unicode(request.auth),  # None
     }
     return Response(content)
-
-
