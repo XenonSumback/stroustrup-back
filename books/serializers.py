@@ -9,6 +9,7 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
         model = Book
         fields = ('id', 'name_book', 'authors', 'tags', 'description', 'ISBN', 'publishing_house',
                   'year', 'quantity', 'likes')
+        depth = 2
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
