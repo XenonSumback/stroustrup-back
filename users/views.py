@@ -17,13 +17,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
+@api_view(['POST'])
 @csrf_exempt
-def userAuth(request):
+def user_auth(request):
     username = request.POST.get('username', None)
     password = request.POST.get('password', None)
     content = {
         'user': unicode(request.user),  # `django.contrib.auth.User` instance.
-        'auth': unicode(request.auth),  # None
     }
     user = authenticate(username=username, password=password)
     if user is not None:

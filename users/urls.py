@@ -3,5 +3,5 @@ from users import views
 
 
 urlpatterns = [
-    url(r'^login/$', views.example_view),
+    url(r'^login/$', views.user_auth),
 ]
