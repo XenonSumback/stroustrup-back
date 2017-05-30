@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from models import Book, Author, Tag, Comment
 from users.serializers import UserSerializer
 from rest_framework import serializers
@@ -28,11 +30,10 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    # user = UserSerializer()
-    # book = BookSerializer()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all()) # user = UserField(default=CurrentUser)
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
 
     class Meta:
         model = Comment
-        fields = ('id', 'user_id', 'book_id', 'date', 'comment')
-        read_only_fields = ()
-        # depth = 2
+        fields = ('id', 'user', 'book', 'date', 'comment')
+        # read_only_fields = ()

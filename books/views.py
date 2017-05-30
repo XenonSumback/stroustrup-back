@@ -45,7 +45,8 @@ class CommentViewSet(viewsets.ViewSet):
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
-    def create(self, request, book_id=None):
+    def create(self, request, book_id):
+        request.data["book"] = book_id
         serializer = CommentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
