@@ -68,8 +68,7 @@ class CommentViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, book_id=None, pk=None):
-        queryset = Comment.objects.all()
-        comment = get_object_or_404(queryset, pk=pk)
+        comment = get_object_or_404(Comment, pk=pk)
         if comment.user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
         comment.delete()
