@@ -1,7 +1,8 @@
 # Create your views here.
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 
@@ -16,6 +17,7 @@ class BookViewSet(viewsets.ModelViewSet):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = IsAuthenticatedOrReadOnly
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -24,6 +26,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    permission_classes = IsAdminUser
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -32,6 +35,7 @@ class TagViewSet(viewsets.ModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
+    permission_classes = IsAdminUser
 
 
 class CommentViewSet(viewsets.ViewSet):
@@ -40,11 +44,13 @@ class CommentViewSet(viewsets.ViewSet):
     """
     serializer_class = CommentSerializer
 
+    @permission_classes(['IsAuthenticated'])
     def list(self, request, book_id):
         comments = Comment.objects.filter(book=book_id)
         serializer = CommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data)
 
+    @permission_classes(['IsAuthenticated'])
     def create(self, request, book_id):
         request.data["book"] = book_id
         serializer = CommentSerializer(data=request.data, context={'request': request})
@@ -53,11 +59,13 @@ class CommentViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @permission_classes(['IsAuthenticated'])
     def retrieve(self, request, book_id, pk=None):
         comment = get_object_or_404(Comment, book=book_id, pk=pk)
         serializer = CommentSerializer(comment, context={'request': request})
         return Response(serializer.data)
 
+    @permission_classes(['IsOwnerOrReadOnly'])
     def update(self, request, book_id, pk=None):
         comment = get_object_or_404(Comment, pk=pk, book=book_id)
         if comment.user != request.user:
@@ -68,6 +76,7 @@ class CommentViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @permission_classes(['IsOwnerOrReadOnly'])
     def destroy(self, request, book_id=None, pk=None):
         queryset = Comment.objects.all()
         comment = get_object_or_404(queryset, pk=pk)
@@ -77,6 +86,7 @@ class CommentViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@permission_classes(['IsAuthenticated'])
 @api_view()
 def likes_handler(request, book_id):
     """
