@@ -92,8 +92,18 @@ def likes_handler(request, book_id):
     API endpoint that allows to add and delete likes.
     """
     book = Book.objects.get(id=book_id)
+    content = {
+        'count': unicode('-'),
+    }
     if book.likes.filter(pk=request.user.pk).exists():
         book.likes.remove(request.user)
+        content = {
+            'count': unicode('-1'),
+        }
     else:
         book.likes.add(request.user)
-    return Response()
+        content = {
+            'count': unicode('+1'),
+        }
+
+    return Response(content)
