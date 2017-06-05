@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 
-from serializers import UserSerializer
+from serializers import UserSerializer, ProfileSerializer
 from forms import RegistrationForm
 
 
@@ -68,3 +68,28 @@ def registration(request):
         }
         return Response(content)
     return Response(form.errors.as_json())
+
+
+@api_view(['GET'])
+@permission_classes([])
+@csrf_exempt
+def whoami_view(request):
+    print(request.user)
+    if request.user.id is None:
+        content = {
+            'is_logged_in': False,
+            'user': None,
+        }
+    else:
+        user = User.objects.get(username=request.user)
+        content = {
+                'is_logged_in': True,
+                'user': {
+                    'username': user.username,
+                    'id': user.pk,
+                    'email': user.email,
+                },
+        }
+        return Response(content)
+    return Response(content)
+
