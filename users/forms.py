@@ -7,7 +7,7 @@ class RegistrationForm(forms.Form):
     password = forms.CharField(label='password', widget=forms.PasswordInput())
     confirm_password = forms.CharField(label='confirm_password', widget=forms.PasswordInput())
 
-    def clean_password2(self):
+    def clean_password(self):
         if 'password' in self.cleaned_data:
             password = self.cleaned_data['password']
             confirm_password = self.cleaned_data['confirm_password']
